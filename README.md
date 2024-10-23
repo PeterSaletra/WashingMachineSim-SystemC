@@ -26,17 +26,17 @@ docker run -it learnwithexamples/systemc
 
 **_NOTE:_** If you want to use vscode as your editor download this extension [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
 
-4. Install git on docker
+4. Update and install git on docker
+
 ```
-apt install git
+apt update && apt install git
 ```
 
 **_NOTE:_** You don't need to use sudo cause you're already login as root
 
 5. Clone the project
 ```
-git clone https://github.com/PeterSaletra/WashingMachineSim-SystemC.git
-cd WashingMachineSim-SystemC
+git clone https://github.com/PeterSaletra/WashingMachineSim-SystemC.git && cd WashingMachineSim-SystemC
 ```
 
 6. Build project and run it
