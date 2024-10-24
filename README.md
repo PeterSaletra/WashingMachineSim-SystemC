@@ -32,7 +32,7 @@ docker run -it learnwithexamples/systemc
 apt update && apt install git
 ```
 
-**_NOTE:_** You don't need to use sudo cause you're already login as root
+**_NOTE:_** You don't need to use sudo cause you're already logged on as root
 
 5. Clone the project
 ```
