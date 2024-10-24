@@ -41,8 +41,7 @@ git clone https://github.com/PeterSaletra/WashingMachineSim-SystemC.git && cd Wa
 
 6. Build project and run it
 ```
-make
-./out.exe
+make && ./out.exe
 ```
 
 ## Technologies
