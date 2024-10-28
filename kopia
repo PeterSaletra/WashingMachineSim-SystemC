@@ -1,7 +1,5 @@
-#include <systemc>
+#include <systemc.h>
 using namespace sc_core;
-
-#define MAXINPUT 5
 
 class COMMON_IF : public sc_interface {
 public:
@@ -42,7 +40,7 @@ class PRIMITIVE_CH : public sc_prim_channel, public COMMON_IF {
   }
 
 private:
-  sc_fifo<unsigned int> fifo;
+  sc_fifo<int> fifo;
 };
 
 SC_MODULE(PROCESSOR_1){
@@ -55,12 +53,17 @@ SC_MODULE(PROCESSOR_1){
 
   void run(){
     unsigned int value;
-    while (true){
+    while (true)
+    {
       std::cout << "Wybierz program: ";
       std::cin >> value;
+      wait(10, SC_MS);
       port->write(value);
+      std::cout << value << std::endl;
+      wait(10, SC_MS);
       if(value < 64){
-        wait(10, SC_MS);
+        if(port->is_fifo_not_empty()){
+        std::cout << "Dupa" << std::endl;
         programme1();
         wait(10, SC_MS);
         programme2();
@@ -75,6 +78,7 @@ SC_MODULE(PROCESSOR_1){
         wait(10, SC_MS);
         port->errorHandle();
         wait(10, SC_MS);
+        }
       }
       wait(60, SC_MS);
     }
@@ -84,14 +88,13 @@ SC_MODULE(PROCESSOR_1){
     if(port->is_fifo_not_empty()){
       unsigned int value = port->read();
       if(value == 0){
-        std::cout << "Wybrałeś nic" << std::endl;
+        std::cout << "Wybrałeś gówno" << std::endl;
       }else if(value == 1){
         std::cout << "Wybrałeś program 1" << std::endl;
       }else{
         port->write(value);
       }
     }
-
   }
 
   void programme2(){
@@ -161,27 +164,28 @@ SC_MODULE(PROCESSOR_2){
 
   void run(){
     unsigned int value;
-    while (true){
-      wait(10, SC_MS);
+    while (true)
+    { 
       if(port->is_fifo_not_empty()){
-        value = port->read();
-        port->write(value);
+        //value = port->read();
+      //std::cout << value <<std::endl;
+        //port->write(value);
         if(value >= 64){
-          wait(5, SC_MS);
+          std::cout << value <<std::endl;
           programme1();
-          wait(5, SC_MS);
+          wait(10, SC_MS);
           programme2();
-          wait(5, SC_MS);
+          wait(10, SC_MS);
           programme3();
-          wait(5, SC_MS);
+          wait(10, SC_MS);
           programme4();
-          wait(5, SC_MS);
+          wait(10, SC_MS);
           programme5();
-          wait(5, SC_MS);
+          wait(10, SC_MS);
           programme6();
-          wait(5, SC_MS);
+          wait(10, SC_MS);
           port->errorHandle();
-          wait(5, SC_MS);
+          wait(10, SC_MS);
         }
       }
     }
