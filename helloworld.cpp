@@ -4,20 +4,34 @@ using namespace sc_core;
 //interface declaring funtions that primitive channel has to implement
 class COMMON_IF : public sc_interface {
 public:
-  virtual void exampleFunction() = 0;
+  virtual void write(int data) = 0;
+  virtual int read() = 0;
+  virtual bool is_fifo_not_empty() = 0;
+  virtual void clear_fifo() = 0;
 };
 
 //primitive channel which will synchronize FIFO access in the future
 class PRIMITIVE_CH : public sc_prim_channel, public COMMON_IF {
   public:
   PRIMITIVE_CH(sc_module_name name) : sc_prim_channel(name){}
-
-  void exampleFunction(){
-    std::cout<<"do something" << std::endl;
+  
+  void write(int data) override {
+      fifo.write(data);
+  }
+  int read() override {
+      return fifo.read();
+  }
+  bool is_fifo_not_empty(){
+      return fifo.num_available() > 0;
+  }
+  void clear_fifo() override {
+      while (fifo.num_available() > 0) {
+          fifo.read();
+      }
   }
 
 private:
-  sc_fifo<int> FIFO;
+  sc_fifo<int> fifo;
 };
 
 // Module simulating processor1
