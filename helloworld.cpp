@@ -37,7 +37,7 @@ void testWashingMachine(std::string &washingMachine) {
     std::cout << washingMachine << std::endl;
     updateProgram(washingMachine, 1);
     updateTemperature(washingMachine,35);
-    std::cout << washingMachine << std::endl;
+    std::cout << washingMachine + " " << std::endl;
 }
 
 
