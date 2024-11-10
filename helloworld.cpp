@@ -1,11 +1,45 @@
 #include <systemc>
-#include <thread> 
+#include <thread>
 #include <chrono>
 #include <iostream>
+
+#include <string>
+#include <Windows.h>
+#include <cstdio>
+#include <regex>
 
 using namespace sc_core;
 
 #define MAXINPUT 5
+
+
+void updateTemperature(std::string &washingMachine, int temperature) {
+    std::regex r("%%");
+    std::string updatedTemperature = std::to_string(temperature);
+    washingMachine = std::regex_replace(washingMachine, r, updatedTemperature);
+}
+
+
+void updateProgram(std::string &washingMachine, int program) {
+    std::regex r("#");
+    std::string updatedProgram = std::to_string(program);
+    washingMachine = std::regex_replace(washingMachine, r, updatedProgram);
+}
+
+
+void configureConsoleCharacterEncoding() {
+    SetConsoleOutputCP(CP_UTF8);
+    setvbuf(stdout, nullptr, _IOFBF, 1000);
+}
+
+void testWashingMachine(std::string &washingMachine) {
+    configureConsoleCharacterEncoding();
+    std::cout << washingMachine << std::endl;
+    updateProgram(washingMachine, 1);
+    updateTemperature(washingMachine,35);
+    std::cout << washingMachine << std::endl;
+}
+
 
 class COMMON_IF : public sc_interface {
 public:
@@ -129,7 +163,7 @@ SC_MODULE(PROCESSOR_1){
         if(value == 0){
           std::cout << "Wylaczono pralke." << std::endl;
           sc_stop();
-        } 
+        }
         else if(value == 1)std::cout << "Wybrałeś program 1" << std::endl;
         else port->write(value);
 
@@ -140,7 +174,7 @@ SC_MODULE(PROCESSOR_1){
   }
 
   void programme2(){
-    
+
     while(true){
       wait(e1 & e2);
 
@@ -173,7 +207,7 @@ SC_MODULE(PROCESSOR_1){
   }
 
   void programme4(){
-   
+
  while(true){
       wait(e1 & e2 & e3 & e4);
 
@@ -190,7 +224,7 @@ SC_MODULE(PROCESSOR_1){
   }
 
   void programme5(){
-  
+
      while(true){
       wait(e1 & e2 & e3 & e4 & e5);
 
@@ -260,7 +294,7 @@ SC_MODULE(PROCESSOR_2){
         unsigned int value = port->read();
         //std::cout<<"PROC1_2: ";
 
-        if(value == 0){ 
+        if(value == 0){
           std::cout << "Wylaczono pralke" << std::endl;
           sc_stop();
         }
@@ -274,7 +308,7 @@ SC_MODULE(PROCESSOR_2){
   }
 
   void programme2(){
-    
+
     while(true){
       wait(e1 & e2);
 
@@ -324,7 +358,7 @@ SC_MODULE(PROCESSOR_2){
   }
 
   void programme5(){
-    
+
      while(true){
       wait(e1 & e2 & e3 & e4 & e5);
 
@@ -339,7 +373,7 @@ SC_MODULE(PROCESSOR_2){
       e6.notify(SC_ZERO_TIME);
     }
   }
-  
+
   void programme6(){
      while(true){
       wait(e1 & e2 & e3 & e4 & e5 & e6);
@@ -363,13 +397,13 @@ SC_MODULE(PROCESSOR_2){
 };
 
 int sc_main(int, char*[]) {
-  
+
   PROCESSOR_1 proc2("PROCESSOR_1");
   PROCESSOR_2 proc1("PROCESSOR_2");
   PRIMITIVE_CH primitive("PRIMITIVE_CH");
   proc1.port(primitive);
   proc2.port(primitive);
-  
+
   sc_start();
 
   return 0;
