@@ -7,6 +7,48 @@ using namespace sc_core;
 
 #define MAXINPUT 5
 
+
+std::string washingMachine = "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                             "⠀⠀⠀⠀⣶⣶⣶⣶⣶⣶⣶⢰⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⢶⣶⣶⠀⠀⠀⠀\n"
+                             "⠀⠀⠀⠀⣿⣿%%°C⣿⣿⣿⣿⣿⣿PROGRAM[#]⣿⣿⠀⠀⠀⠀\n"
+                             "⠀⠀⠀⠀⠛⠛⠛⠛⠛⠛⠛⠘⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠀⠀⠀⠀\n"
+                             "⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀\n"
+                             "⠀⠀⠀⠀⣿⣿⣿⣿⣿⡿⠛⢉⣁⣤⣤⣤⣤⣈⡉⠛⢿⣿⣿⣿⣿⣿⠀⠀⠀⠀\n"
+                             "⠀⠀⠀⠀⣿⣿⣿⡿⠋⣠⣾⣿⠿⠛⠛⠛⠛⠿⣿⣷⣄⠙⢿⣿⣿⣿⠀⠀⠀⠀\n"
+                             "⠀⠀⠀⠀⣿⣿⡿⠁⣼⣿⡿⢁⣤⠖⠀⠀⠀⠀⠈⢿⡿⠇⠈⢿⣿⣿⠀⠀⠀⠀\n"K
+                             "⠀⠀⠀⠀⣿⣿⠃⢸⣿⡿⠀⡞⠁⠀⠀⠀⠀⠀⠀⠀⢠⣶⡇⠘⣿⣿⠀⠀⠀⠀\n"
+                             "⠀⠀⠀⠀⣿⣿⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡇⠀⣿⣿⠀⠀⠀⠀\n"
+                             "⠀⠀⠀⠀⣿⣿⣇⠘⣿⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⢠⡈⠛⠃⣸⣿⣿⠀⠀⠀⠀\n"
+                             "⠀⠀⠀⠀⣿⣿⣿⣄⠙⢿⣿⣦⣀⠀⠀⠀⠀⣀⣴⣿⡿⠃⣰⣿⣿⣿⠀⠀⠀⠀\n"
+                             "⠀⠀⠀⠀⣿⣿⣿⣿⣧⣀⠙⠿⣿⣿⣿⣿⣿⣿⠿⠋⣀⣼⣿⣿⣿⣿⠀⠀⠀⠀\n"
+                             "⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣷⣶⣤⣤⣤⣤⣤⣤⣶⣾⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀\n"
+                             "⠀⠀⠀⠀⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀";
+
+
+void configureConsoleCharacterEncoding() {
+    SetConsoleOutputCP(CP_UTF8);
+    setvbuf(stdout, nullptr, _IOFBF, 1000);
+}
+
+void updateTemperature(std::string &washingMachine, int temperature) {
+    std::regex r("%%");
+    std::string updatedTemperature = std::to_string(temperature);
+    washingMachine = std::regex_replace(washingMachine, r, updatedTemperature);
+}
+
+void updateProgram(std::string &washingMachine, int program) {
+    std::regex r("#");
+    std::string updatedProgram = std::to_string(program);
+    washingMachine = std::regex_replace(washingMachine, r, updatedProgram);
+}
+
+void testWashingMachine() {
+    std::cout << washingMachine << std::endl;
+    updateProgram(washingMachine, 1);
+    updateTemperature(washingMachine,35);
+    std::cout << washingMachine << std::endl;
+}
+
 class COMMON_IF : public sc_interface {
 public:
   virtual void write(int data) = 0;
