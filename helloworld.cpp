@@ -4,7 +4,6 @@
 #include <iostream>
 
 #include <string>
-#include <Windows.h>
 #include <cstdio>
 #include <regex>
 
@@ -28,7 +27,6 @@ void updateProgram(std::string &washingMachine, int program) {
 
 
 void configureConsoleCharacterEncoding() {
-    SetConsoleOutputCP(CP_UTF8);
     setvbuf(stdout, nullptr, _IOFBF, 1000);
 }
 
