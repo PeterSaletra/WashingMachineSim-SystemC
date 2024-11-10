@@ -11,6 +11,23 @@ using namespace sc_core;
 
 #define MAXINPUT 5
 
+    std::string washingMachine = "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+                                 "⠀⠀⠀⠀⣶⣶⣶⣶⣶⣶⣶⢰⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⢶⣶⣶⠀⠀⠀⠀\n"
+                                 "⠀⠀⠀⠀⣿⣿%%°C⣿⣿⣿⣿⣿⣿PROGRAM[#]⣿⣿⠀⠀⠀⠀\n"
+                                 "⠀⠀⠀⠀⠛⠛⠛⠛⠛⠛⠛⠘⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠀⠀⠀⠀\n"
+                                 "⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀\n"
+                                 "⠀⠀⠀⠀⣿⣿⣿⣿⣿⡿⠛⢉⣁⣤⣤⣤⣤⣈⡉⠛⢿⣿⣿⣿⣿⣿⠀⠀⠀⠀\n"
+                                 "⠀⠀⠀⠀⣿⣿⣿⡿⠋⣠⣾⣿⠿⠛⠛⠛⠛⠿⣿⣷⣄⠙⢿⣿⣿⣿⠀⠀⠀⠀\n"
+                                 "⠀⠀⠀⠀⣿⣿⡿⠁⣼⣿⡿⢁⣤⠖⠀⠀⠀⠀⠈⢿⡿⠇⠈⢿⣿⣿⠀⠀⠀⠀\n"
+                                 "⠀⠀⠀⠀⣿⣿⠃⢸⣿⡿⠀⡞⠁⠀⠀⠀⠀⠀⠀⠀⢠⣶⡇⠘⣿⣿⠀⠀⠀⠀\n"
+                                 "⠀⠀⠀⠀⣿⣿⠀⢸⣿⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⡇⠀⣿⣿⠀⠀⠀⠀\n"
+                                 "⠀⠀⠀⠀⣿⣿⣇⠘⣿⣿⡄⠀⠀⠀⠀⠀⠀⠀⠀⢠⡈⠛⠃⣸⣿⣿⠀⠀⠀⠀\n"
+                                 "⠀⠀⠀⠀⣿⣿⣿⣄⠙⢿⣿⣦⣀⠀⠀⠀⠀⣀⣴⣿⡿⠃⣰⣿⣿⣿⠀⠀⠀⠀\n"
+                                 "⠀⠀⠀⠀⣿⣿⣿⣿⣧⣀⠙⠿⣿⣿⣿⣿⣿⣿⠿⠋⣀⣼⣿⣿⣿⣿⠀⠀⠀⠀\n"
+                                 "⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣷⣶⣤⣤⣤⣤⣤⣤⣶⣾⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀\n"
+                                 "⠀⠀⠀⠀⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀";
+
+
 
 void updateTemperature(std::string &washingMachine, int temperature) {
     std::regex r("%%");
@@ -26,8 +43,13 @@ void updateProgram(std::string &washingMachine, int program) {
 }
 
 
+
+
 void configureConsoleCharacterEncoding() {
-    setvbuf(stdout, nullptr, _IOFBF, 1000);
+  #ifdef _WIN32
+      SetConsoleOutputCP(CP_UTF8);
+  #endif
+      setvbuf(stdout, nullptr, _IOFBF, 1000);
 }
 
 void testWashingMachine(std::string &washingMachine) {
@@ -162,7 +184,10 @@ SC_MODULE(PROCESSOR_1){
           std::cout << "Wylaczono pralke." << std::endl;
           sc_stop();
         }
-        else if(value == 1)std::cout << "Wybrałeś program 1" << std::endl;
+        else if(value == 1){
+          std::cout << "Wybrałeś program 1" << std::endl;
+          updateProgram(washingMachine, 1);
+        }
         else port->write(value);
 
       }
@@ -180,7 +205,10 @@ SC_MODULE(PROCESSOR_1){
         unsigned int value = port->read();
         //std::cout<<"PROC2: ";
 
-        if(value == 2) std::cout << "Wybrałeś program 2" << std::endl;
+        if(value == 2){
+          std::cout << "Wybrałeś program 2" << std::endl;
+          updateProgram(washingMachine, 2);
+        }
         else port->write(value);
       }
 
@@ -196,7 +224,10 @@ SC_MODULE(PROCESSOR_1){
         unsigned int value = port->read();
         //std::cout<<"PROC3: ";
 
-        if(value == 4) std::cout << "Wybrałeś program 3" << std::endl;
+        if(value == 4){
+          std::cout << "Wybrałeś program 3" << std::endl;
+          updateProgram(washingMachine, 3);
+        }
         else port->write(value);
       }
 
@@ -213,7 +244,10 @@ SC_MODULE(PROCESSOR_1){
         unsigned int value = port->read();
         //std::cout<<"PROC4: ";
 
-        if(value == 8) std::cout << "Wybrałeś program 4" << std::endl;
+        if(value == 8){
+          std::cout << "Wybrałeś program 4" << std::endl;
+          updateProgram(washingMachine, 4);
+        }
         else port->write(value);
       }
 
@@ -230,7 +264,10 @@ SC_MODULE(PROCESSOR_1){
         unsigned int value = port->read();
         //std::cout<<"PROC5: ";
 
-        if(value == 16) std::cout << "Wybrałeś program 5" << std::endl;
+        if(value == 16){
+          std::cout << "Wybrałeś program 5" << std::endl;
+          updateProgram(washingMachine, 5);
+        }
         else port->write(value);
       }
 
@@ -246,7 +283,10 @@ SC_MODULE(PROCESSOR_1){
         unsigned int value = port->read();
         //std::cout<<"PROC6: ";
 
-        if(value == 32) std::cout << "Wybrałeś program 6" << std::endl;
+        if(value == 32){
+          std::cout << "Wybrałeś program 6" << std::endl;
+          updateProgram(washingMachine, 6);
+        }
         else port->write(value);
 
         wait(SC_ZERO_TIME); // waiting to add value to fifo
@@ -296,7 +336,10 @@ SC_MODULE(PROCESSOR_2){
           std::cout << "Wylaczono pralke" << std::endl;
           sc_stop();
         }
-        else if(value == 1) std::cout << "Temperatura 30 stopni" << std::endl;
+        else if(value == 1){
+          std::cout << "Temperatura 30 stopni" << std::endl;
+          updateTemperature(washingMachine, 30);
+        }
         else port->write(value);
       }
 
@@ -314,7 +357,10 @@ SC_MODULE(PROCESSOR_2){
         unsigned int value = port->read();
         //std::cout<<"PROC2_2: ";
 
-        if(value == 2) std::cout << "Temperatura 35 stopni" << std::endl;
+        if(value == 2){
+          std::cout << "Temperatura 35 stopni" << std::endl;
+          updateTemperature(washingMachine, 35);
+        }
         else port->write(value);
       }
 
@@ -331,7 +377,10 @@ SC_MODULE(PROCESSOR_2){
         unsigned int value = port->read();
         //std::cout<<"PROC3_2: ";
 
-        if(value == 4) std::cout << "Temperatura 40 stopni" << std::endl;
+        if(value == 4){
+          std::cout << "Temperatura 40 stopni" << std::endl;
+          updateTemperature(washingMachine, 40);
+        }
         else port->write(value);
       }
 
@@ -347,7 +396,10 @@ SC_MODULE(PROCESSOR_2){
         unsigned int value = port->read();
         //std::cout<<"PROC4_2: ";
 
-        if(value == 8) std::cout << "Temperatura 60 stopni" << std::endl;
+        if(value == 8){
+          std::cout << "Temperatura 60 stopni" << std::endl;
+          updateTemperature(washingMachine, 60);
+        }
         else port->write(value);
       }
 
@@ -364,7 +416,10 @@ SC_MODULE(PROCESSOR_2){
         unsigned int value = port->read();
         //std::cout<<"PROC5_2: ";
 
-        if(value == 16) std::cout << "Temperatura 80 stopni" << std::endl;
+        if(value == 16){
+          std::cout << "Temperatura 80 stopni" << std::endl;
+          updateTemperature(washingMachine, 80);
+        }
         else port->write(value);
       }
 
@@ -380,14 +435,17 @@ SC_MODULE(PROCESSOR_2){
         unsigned int value = port->read();
         //std::cout<<"PROC6_2: ";
 
-        if(value == 32) std::cout << "Temperatura 90 stopni" << std::endl;
+        if(value == 32){
+          std::cout << "Temperatura 90 stopni" << std::endl;
+          updateTemperature(washingMachine, 90);
+        }
         else port->write(value);
 
         wait(SC_ZERO_TIME); // waiting to add value to fifo
         port->errorHandle();
       }
 
-      std::cout << "Doing laundry" << std::endl;
+      std::cout << washingMachine << std::endl;
       std::this_thread::sleep_for(std::chrono::seconds(10));
       port->getEvent(0).notify(SC_ZERO_TIME);
     }
