@@ -2,18 +2,19 @@
 #include <thread>
 #include <chrono>
 #include <iostream>
-
 #include <string>
 #include <cstdio>
 #include <regex>
 
 using namespace sc_core;
 
-#define MAXINPUT 5
 
-    std::string washingMachine = "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+    std::string washingMachine;
+
+void resetWashingMachine(std::string &washingMachine) {
+    washingMachine = "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
                                  "⠀⠀⠀⠀⣶⣶⣶⣶⣶⣶⣶⢰⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⢶⣶⣶⠀⠀⠀⠀\n"
-                                 "⠀⠀⠀⠀⣿⣿%%°C⣿⣿⣿⣿⣿⣿PROGRAM[#]⣿⣿⠀⠀⠀⠀\n"
+                                 "⠀⠀⠀⠀⣿⣿%%°C⣿⣿⣿⣿PROGRAM[#]⣿⣿⠀⠀⠀⠀\n"
                                  "⠀⠀⠀⠀⠛⠛⠛⠛⠛⠛⠛⠘⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠀⠀⠀⠀\n"
                                  "⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀\n"
                                  "⠀⠀⠀⠀⣿⣿⣿⣿⣿⡿⠛⢉⣁⣤⣤⣤⣤⣈⡉⠛⢿⣿⣿⣿⣿⣿⠀⠀⠀⠀\n"
@@ -26,8 +27,7 @@ using namespace sc_core;
                                  "⠀⠀⠀⠀⣿⣿⣿⣿⣧⣀⠙⠿⣿⣿⣿⣿⣿⣿⠿⠋⣀⣼⣿⣿⣿⣿⠀⠀⠀⠀\n"
                                  "⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣷⣶⣤⣤⣤⣤⣤⣤⣶⣾⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀\n"
                                  "⠀⠀⠀⠀⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀";
-
-
+}
 
 void updateTemperature(std::string &washingMachine, int temperature) {
     std::regex r("%%");
@@ -35,15 +35,11 @@ void updateTemperature(std::string &washingMachine, int temperature) {
     washingMachine = std::regex_replace(washingMachine, r, updatedTemperature);
 }
 
-
 void updateProgram(std::string &washingMachine, int program) {
     std::regex r("#");
     std::string updatedProgram = std::to_string(program);
     washingMachine = std::regex_replace(washingMachine, r, updatedProgram);
 }
-
-
-
 
 void configureConsoleCharacterEncoding() {
   #ifdef _WIN32
@@ -164,6 +160,7 @@ SC_MODULE(PROCESSOR_1){
 
   void user_input(){
     while(true){
+        resetWashingMachine(washingMachine);
         int value;
         std::cout << "Wybierz program: ";
         std::cin >> value;
@@ -230,7 +227,7 @@ SC_MODULE(PROCESSOR_1){
         }
         else port->write(value);
       }
-
+      
       e4.notify(SC_ZERO_TIME);
     }
   }
