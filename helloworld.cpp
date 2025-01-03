@@ -136,26 +136,70 @@ private:
 
 };
 
-//TODO: ZMIENIC ERROR HANDLING? ZEBY OD NOWA SIE ODPALAL A NIE WYLACZAL
+ // PODMODUŁ
+SC_MODULE(SUBMODULE) {
+  sc_port<COMMON_IF> port;
+  sc_event& e6;  // referencja do e6 z PROCESSOR_1
 
-//TODO: zostawic te klodki jak juz sa czy wywalic? przy kolejce w primitive channel
-//TODO: poki co zostawielm i zakomentowalem printy o zagarnianiu kłodki
+  SC_HAS_PROCESS(SUBMODULE);
+  SUBMODULE(sc_module_name name, sc_event& e6_ref) : 
+    sc_module(name), e6(e6_ref) {
+    SC_THREAD(programme6);
+  }
 
-//TODO: dodac ASCII cyferki do programow
+  void programme6() {
+    while(true) {
+      wait(e6);
+
+      if(port->is_fifo_not_empty()) {
+        unsigned int value = port->read();
+
+        if(value == 32) {
+          std::cout << "Wybrałeś program 6" << std::endl;
+          updateProgram(washingMachine, 6);
+        }
+        else port->write(value);
+
+        wait(SC_ZERO_TIME);
+        port->errorHandle();
+      }
+
+      port->getEvent(1).notify(SC_ZERO_TIME);
+    }
+  }
+};
 
 SC_MODULE(PROCESSOR_1){
 
   sc_port<COMMON_IF> port;
   sc_event e1, e2, e3, e4, e5, e6;
+  SUBMODULE* submod = new SUBMODULE("SUBMODULE", e6);
+  sc_in_clk clock;
 
   SC_CTOR(PROCESSOR_1){
-    SC_THREAD(user_input)
+    submod->port(port);  // Connect submodule's port
+
+    SC_THREAD(user_input);
+    sensitive << clock.pos();
+
     SC_THREAD(programme1);
+    sensitive << clock.pos();
+
     SC_THREAD(programme2);
+    sensitive << clock.pos();
+
     SC_THREAD(programme3);
+    sensitive << clock.pos();
+
     SC_THREAD(programme4);
+    sensitive << clock.pos();
+
     SC_THREAD(programme5);
-    SC_THREAD(programme6);
+    sensitive << clock.pos();
+  }
+
+  ~PROCESSOR_1() {
+    delete submod;
   }
 
   void user_input(){
@@ -272,42 +316,35 @@ SC_MODULE(PROCESSOR_1){
     }
   }
 
-  void programme6(){
-     while(true){
-      wait(e1 & e2 & e3 & e4 & e5 & e6);
 
-      if(port->is_fifo_not_empty()){
-        unsigned int value = port->read();
-        //std::cout<<"PROC6: ";
-
-        if(value == 32){
-          std::cout << "Wybrałeś program 6" << std::endl;
-          updateProgram(washingMachine, 6);
-        }
-        else port->write(value);
-
-        wait(SC_ZERO_TIME); // waiting to add value to fifo
-        port->errorHandle();
-      }
-
-      port->getEvent(1).notify(SC_ZERO_TIME);
-    }
-  }
 };
 
 SC_MODULE(PROCESSOR_2){
 
   sc_port<COMMON_IF> port;
   sc_event e1, e2, e3, e4, e5, e6;
+  sc_in_clk clock;
 
   SC_CTOR(PROCESSOR_2){
     SC_THREAD(user_input);
+
     SC_THREAD(programme1);
+    sensitive << clock.pos();
+
     SC_THREAD(programme2);
+    sensitive << clock.pos();
+
     SC_THREAD(programme3);
+    sensitive << clock.pos();
+
     SC_THREAD(programme4);
+    sensitive << clock.pos();
+    
     SC_THREAD(programme5);
+    sensitive << clock.pos();
+
     SC_THREAD(programme6);
+    sensitive << clock.pos();
   }
 
   void user_input(){
@@ -443,7 +480,7 @@ SC_MODULE(PROCESSOR_2){
       }
 
       std::cout << washingMachine << std::endl;
-      std::this_thread::sleep_for(std::chrono::seconds(10));
+     /* std::this_thread::sleep_for(std::chrono::seconds(10));*/
       port->getEvent(0).notify(SC_ZERO_TIME);
     }
   }
@@ -451,15 +488,17 @@ SC_MODULE(PROCESSOR_2){
 
 int sc_main(int, char*[]) {
 
-  //nadrzedny clock
-  //podmodul
+  sc_clock master_clock("master_clock", sc_time(10, SC_SEC));
+
   PROCESSOR_1 proc2("PROCESSOR_1");
   PROCESSOR_2 proc1("PROCESSOR_2");
   PRIMITIVE_CH primitive("PRIMITIVE_CH");
   proc1.port(primitive);
   proc2.port(primitive);
+  proc1.clock(master_clock);
+  proc2.clock(master_clock);
 
   sc_start();
 
-  return 0;
-}
+  return 0; 
+} 
