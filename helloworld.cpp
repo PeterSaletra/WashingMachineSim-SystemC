@@ -107,7 +107,7 @@ class PRIMITIVE_CH : public sc_prim_channel, public COMMON_IF {
   void errorHandle() override {
     if(is_fifo_not_empty()){
       unsigned int value = fifo.read();
-      if(!(value == 0 or value == 1 or value == 2 or value == 4 or value == 8 or value == 16 or value == 32 or value == 64 or value == 65 or value == 66 or value == 68 or value == 72 or value == 80 or value == 96)){
+      if(!(value == 0 or value == 1 or value == 2 or value == 4 or value == 8 or value == 16 or value == 32 or value == 64)){
         std::cout << "Bledny wybor. Uruchom pralke ponownie." << std::endl;
         clear_fifo();
         sc_stop();
@@ -451,6 +451,8 @@ SC_MODULE(PROCESSOR_2){
 
 int sc_main(int, char*[]) {
 
+  //nadrzedny clock
+  //podmodul
   PROCESSOR_1 proc2("PROCESSOR_1");
   PROCESSOR_2 proc1("PROCESSOR_2");
   PRIMITIVE_CH primitive("PRIMITIVE_CH");
